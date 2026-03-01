@@ -203,10 +203,20 @@ def process_files_to_reports(uploaded_files):
 
     excel_bytes = excel_buf.getvalue()
 
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    # If you need a specific timezone, see the note below.
+    
     # Build in-memory ZIP
     zip_buf = io.BytesIO()
+    
+    # Today's date as DD-MM-YYYY
+    date_str = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%d-%m-%Y")
+    excel_filename = f"KPI_Degraded_Report_Combined_{date_str}.xlsx"
+    
     with zipfile.ZipFile(zip_buf, "w", zipfile.ZIP_DEFLATED) as z:
-        z.writestr("KPI_Degraded_Report_Combined.xlsx", excel_bytes)
+        z.writestr(excel_filename, excel_bytes)   # <— use the dated name here
+    
     zip_bytes = zip_buf.getvalue()
 
     return summary_df, final_df, excel_bytes, zip_bytes, sorted(set(missing_kpis))

@@ -106,21 +106,33 @@ if files:
         st.info("No degraded rows found.")
 
     col1, col2 = st.columns(2)
+    from datetime import datetime
+    from zoneinfo import ZoneInfo  # ensures IST time
+    
+    # Generate today's date in DD-MM-YYYY format (IST)
+    date_str = datetime.now(ZoneInfo("Asia/Kolkata")).strftime("%d-%m-%Y")
+    
+    # Build dynamic filenames
+    excel_download_name = f"KPI_Degraded_Report_Combined_{date_str}.xlsx"
+    zip_download_name   = f"KPI_Degraded_Report_Combined_{date_str}.zip"
+    
+    
     with col1:
         st.download_button(
             label="⬇️ Download Excel (Summary & Degraded_Sites)",
             data=excel_bytes,
-            file_name="KPI_Degraded_Report_Combined.xlsx",
+            file_name=excel_download_name,
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
+    
     with col2:
         st.download_button(
             label="⬇️ Download ZIP (contains Excel)",
             data=zip_bytes,
-            file_name="KPI_Degraded_Report_Combined.zip",
+            file_name=zip_download_name,
             mime="application/zip",
         )
-
+    
     st.success("✅ Report generated successfully.")
 else:
     st.info("Upload your KPI Excel files to begin.")
