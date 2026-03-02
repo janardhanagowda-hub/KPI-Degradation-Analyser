@@ -1,6 +1,13 @@
 # app.py
 import streamlit as st
-from kpi_logic import process_files_to_reports
+
+# Force-reload kpi_logic so changes are always picked up in Streamlit
+import importlib
+import kpi_logic  # import the module (not the function)
+importlib.reload(kpi_logic)  # ensure latest code is loaded
+
+# Pull the function from the freshly reloaded module
+process_files_to_reports = kpi_logic.process_files_to_reports
 
 # ---------------------------------------------------------
 #  LOGIN PAGE (Hard-coded)
@@ -36,7 +43,7 @@ def _arrow_safe(df):
     df = df.copy()
     for col in [
         "site id", "carrier", "region", "site name", "unnamed: 0",
-        "Degraded KPI", "Severity", "Tech", "remarks", "date"
+        "Degraded KPI", "Severity", "Tech", "remarks", "Period Start Time"
     ]:
         if col in df.columns:
             df[col] = df[col].astype("string")
@@ -49,6 +56,7 @@ def _arrow_safe(df):
 st.set_page_config(page_title="KPI Degraded Report", layout="wide")
 
 st.title("📊 KPI Degraded Report")
+st.caption(f"Logic module: {getattr(kpi_logic, 'KPI_LOGIC_VERSION', 'unknown')}")
 st.caption("Upload daily/periodic KPI Excel files; combine, evaluate against thresholds, and download the report.")
 
 # Sidebar tips
